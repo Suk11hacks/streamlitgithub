@@ -9,7 +9,7 @@ Original file is located at
 For the running the code and streamlit app using command prompt
 """
 
-pip install streamlit opencv-python numpy mediapipe
+#pip install streamlit opencv-python numpy mediapipe
 
 import streamlit as st
 import cv2
