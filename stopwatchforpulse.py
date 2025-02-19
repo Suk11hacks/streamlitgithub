@@ -141,4 +141,59 @@ if run_camera:
     cap.release()
 
 #streamlit run pulse_stopwatch.py
+import streamlit as st
+import time
+import pandas as pd
+
+# Streamlit UI
+st.title("Pulse Rate Stopwatch & Recorder")
+
+# Stopwatch state
+if "stopwatch_running" not in st.session_state:
+    st.session_state.stopwatch_running = False
+    st.session_state.start_time = None
+    st.session_state.elapsed_time = 0.0
+    st.session_state.pulse_records = []
+
+# Start/Stop Button
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Start Stopwatch", key="start"):
+        st.session_state.stopwatch_running = True
+        st.session_state.start_time = time.time() - st.session_state.elapsed_time
+
+with col2:
+    if st.button("Stop Stopwatch", key="stop"):
+        st.session_state.stopwatch_running = False
+
+# Reset Button
+if st.button("Reset Stopwatch"):
+    st.session_state.stopwatch_running = False
+    st.session_state.start_time = None
+    st.session_state.elapsed_time = 0.0
+
+# Stopwatch logic
+if st.session_state.stopwatch_running:
+    st.session_state.elapsed_time = time.time() - st.session_state.start_time
+
+# Display Stopwatch
+st.subheader(f"Elapsed Time: {st.session_state.elapsed_time:.2f} seconds")
+
+# Manual Pulse Rate Input
+pulse_rate = st.number_input("Enter Pulse Rate (BPM):", min_value=0, max_value=300, step=1)
+
+# Save Pulse Rate
+if st.button("Record Pulse Rate"):
+    st.session_state.pulse_records.append({"Time (s)": round(st.session_state.elapsed_time, 2), "Pulse Rate (BPM)": pulse_rate})
+    st.success(f"Recorded: {pulse_rate} BPM at {st.session_state.elapsed_time:.2f} seconds")
+
+# Display recorded data
+if st.session_state.pulse_records:
+    df = pd.DataFrame(st.session_state.pulse_records)
+    st.subheader("Recorded Pulse Rates")
+    st.dataframe(df)
+
+    # Download recorded data
+    csv = df.to_csv(index=False).encode('utf-8')
+    st.download_button("Download Pulse Data", csv, "pulse_data.csv", "text/csv")
 
