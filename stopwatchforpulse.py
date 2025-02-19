@@ -140,5 +140,5 @@ if run_camera:
 
     cap.release()
 
-streamlit run pulse_stopwatch.py
+#streamlit run pulse_stopwatch.py
 
